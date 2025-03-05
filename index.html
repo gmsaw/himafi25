@@ -65,12 +65,23 @@
         max-width: 800px;
         margin: 0 auto 30px;
     }
-    #searchInput {
-        border-radius: 20px 0 0 20px;
-    }
-    .search-section .btn {
-        border-radius: 0 20px 20px 0;
-    }
+
+    .search-section {
+    max-width: 800px;
+    margin: 0 auto 30px;
+}
+
+#searchInput {
+    border-radius: 20px 0 0 20px;
+    padding: 0.5rem 1rem;
+}
+
+.search-section .btn {
+    border-radius: 0 20px 20px 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
     </style>
 </head>
 <body>
@@ -81,10 +92,15 @@
 
     <div class="search-section mb-4">
         <div class="input-group">
-            <input type="text" class="form-control" id="searchInput" placeholder="Cari tugas (judul, tipe, atau owner)...">
+            <input 
+                type="text" 
+                class="form-control" 
+                id="searchInput" 
+                placeholder="Cari tugas (judul, tipe, atau owner)..." 
+                onkeyup="handleSearch(event)"
+            >
             <button class="btn btn-primary" onclick="searchTasks()">
                 <i class="bi bi-search"></i> Cari
-            </button>
             </button>
         </div>
     </div>
@@ -377,18 +393,35 @@ function updateTaskOwner(id, newOwner) {
     updateUI();
 }
 
+function handleSearch(event) {
+    // Jika tombol Enter ditekan, jalankan pencarian
+    if (event.key === 'Enter') {
+        searchTasks();
+    }
+}
+
 function searchTasks() {
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
     
+    if (!searchTerm) {
+        // Jika search bar kosong, tampilkan semua task
+        updateUI();
+        return;
+    }
+
     const filteredTasks = tasks.filter(task => 
         task.title.toLowerCase().includes(searchTerm) ||
         task.type.toLowerCase().includes(searchTerm) ||
         task.owner.toLowerCase().includes(searchTerm)
     );
 
+    // Simpan search term ke localStorage
+    localStorage.setItem('searchTerm', searchTerm);
+
+    window.open('search-results.html', '_blank');
+
     updateUI(filteredTasks);
 }
-
         // Initial load
         updateUI();
     </script>
